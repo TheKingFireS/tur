@@ -19,22 +19,15 @@ termux_step_pre_configure() {
 }
 
 termux_step_make() {
-	dotnet publish -c Release -r ${DOTNET_TARGET_NAME} /p:PublishAot=false -p:UseAppHost=false -p:DebugType=embedded --no-self-contained
+	dotnet publish -c Release -r ${DOTNET_TARGET_NAME} /p:PublishAot=false -p:UseAppHost=false -p:DebugType=embedded --no-self-contained --output out
 }
 
 termux_step_make_install() {
-	mkdir out
-	cp ./DumbVersionCreator/bin/Release/net10.0/publish/DumbVersionCreator.* ./out/
-	cp ./DumbVersionPatcher/bin/Release/net10.0/publish/DumbVersionPatcher.* ./out/
-	cp ./LibDumbVersion/bin/Release/net10.0/publish/LibDumbVersion.dll ./out/
-	cp ./LibDumbVersion/bin/Release/net10.0/publish/System.IO.Hashing.dll ./out/
-
 	ls -l out
 
 	find out -name "*.dll" -exec chmod 0644 "{}" \;
 
-	#Exclude LICENSE file from being copied because same thing is already added in other folder.
-	rm out/LICENSE
+	rm out/LibDumbVersion.deps.json
 
 	mkdir -p "${TERMUX_PREFIX}/lib"
 	cp -r out "${TERMUX_PREFIX}/lib/${TERMUX_PKG_NAME}"
